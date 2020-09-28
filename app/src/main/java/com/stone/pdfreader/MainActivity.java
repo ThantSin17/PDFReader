@@ -25,7 +25,8 @@ public class MainActivity extends AppCompatActivity implements itemOnClickListen
     ActivityMainBinding binding;
     RecyclerView recyclerView;
     PDFAdapter adapter;
-
+    PDFManager manager;
+    List<PdfDto> pdfList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +35,10 @@ public class MainActivity extends AppCompatActivity implements itemOnClickListen
         setContentView(binding.getRoot());
         //recyclerView=binding.recyclerView;
         adapter = new PDFAdapter(this,this);
-       // walkdir(new File(Environment.getExternalStorageDirectory().getAbsolutePath()));
-        init();
+        manager=new PDFManager();
+        adapter.setPdfList(manager.getPlayList());
+        //walkdir(new File(Environment.getExternalStorageDirectory().toString()));
+       // init();
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(adapter);
 
@@ -97,35 +100,67 @@ public class MainActivity extends AppCompatActivity implements itemOnClickListen
         return resultBuffer.toString();
     }
     public void walkdir(File dir) {
-        List<PdfDto> pdfList = new ArrayList<>();
+
         // String pdfPattern = ".pdf";
 
         File listFile[] = dir.listFiles();
 
         if (listFile != null && listFile.length > 0) {
-            for (int i = 0; i < listFile.length; i++) {
+//            for (int i = 0; i < listFile.length; i++) {
 
-                if (listFile[i].isDirectory()) {
-                    walkdir(listFile[i]);
-                } else {
-                    if (listFile[i].getName().endsWith(".pdf")) {
-                        //Do what ever u want
-
-                        if (!listFile[i].getName().equals(" ")) {
-                            PdfDto item = new PdfDto();
-                            item.setTitle(listFile[i].getName());
-                            item.setSize(listFile[i].getAbsolutePath());
-                            pdfList.add(item);
-                        }
-                        // item.setSize(String.valueOf(listFile[i].getTotalSpace()));
-
+                for (File file : listFile) {
+                    System.out.println(file.getAbsolutePath());
+                    if (file.isDirectory()) {
+                        scanDirectory(file);
+                    } else {
+                        addSongToList(file);
                     }
                 }
+//                if (listFile[i].isDirectory()) {
+//                    walkdir(listFile[i]);
+//                } else {
+//                    if (listFile[i].getName().endsWith(".pdf")) {
+//                        //Do what ever u want
+//
+//                        if (!listFile[i].getName().equals(" ")) {
+//                            PdfDto item = new PdfDto();
+//                            item.setTitle(listFile[i].getName());
+//                            item.setSize(listFile[i].getAbsolutePath());
+//                            pdfList.add(item);
+//                        }
+//                        // item.setSize(String.valueOf(listFile[i].getTotalSpace()));
+//
+//                    }
+//                }
 
             }
 
-        }
+      //  }
         adapter.setPdfList(pdfList);
+    }
+
+    private void scanDirectory(File directory) {
+        if (directory != null) {
+            File[] listFiles = directory.listFiles();
+            if (listFiles != null && listFiles.length > 0) {
+                for (File file : listFiles) {
+                    if (file.isDirectory()) {
+                        scanDirectory(file);
+                    } else {
+                        addSongToList(file);
+                    }
+
+                }
+            }
+        }
+    }
+    private void addSongToList(File song) {
+        if (song.getName().endsWith(".pdf")) {
+            PdfDto item = new PdfDto();
+                            item.setTitle(song.getName());
+                            item.setSize(song.getAbsolutePath());
+                            pdfList.add(item);
+        }
     }
 
     @Override
