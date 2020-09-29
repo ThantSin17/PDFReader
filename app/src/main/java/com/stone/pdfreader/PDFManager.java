@@ -6,14 +6,12 @@ import com.stone.pdfreader.dto.PdfDto;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class PDFManager {
     final String MEDIA_PATH = Environment.getExternalStorageDirectory()
             .getPath() + "/";
     private List<PdfDto> pdfList = new ArrayList<>();
-    private String mp3Pattern = ".pdf";
 
     // Constructor
 
@@ -27,17 +25,15 @@ public class PDFManager {
      * */
     public ArrayList<PdfDto> getPlayList() {
         System.out.println(MEDIA_PATH);
-        if (MEDIA_PATH != null) {
-            File home = new File(MEDIA_PATH);
-            File[] listFiles = home.listFiles();
-            if (listFiles != null && listFiles.length > 0) {
-                for (File file : listFiles) {
-                    System.out.println(file.getAbsolutePath());
-                    if (file.isDirectory()) {
-                        scanDirectory(file);
-                    } else {
-                        addSongToList(file);
-                    }
+        File home = new File(MEDIA_PATH);
+        File[] listFiles = home.listFiles();
+        if (listFiles != null && listFiles.length > 0) {
+            for (File file : listFiles) {
+                System.out.println(file.getAbsolutePath());
+                if (file.isDirectory()) {
+                    scanDirectory(file);
+                } else {
+                    addSongToList(file);
                 }
             }
         }
@@ -66,6 +62,8 @@ public class PDFManager {
             PdfDto item = new PdfDto();
             item.setTitle(song.getName());
             item.setSize(song.getAbsolutePath());
+            item.setUrl(song.getAbsolutePath());
+
             pdfList.add(item);
         }
     }

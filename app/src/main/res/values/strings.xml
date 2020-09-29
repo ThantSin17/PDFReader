@@ -8,6 +8,13 @@
     <string name="delete">Delete</string>
     <string name="share">Share</string>
     <string name="cancel">Cancel</string>
-    <string name="ok">OK</string>
+
     <string name="enter_new_name">Enter new name</string>
+    <string name="properties">Properties</string>
+    <string name="file_name">File Name</string>
+    <string name="file_size">File Size</string>
+    <string name="asdfghjkl_n_g">asdfghjkl \n g</string>
+    <string name="ok">OK</string>
+    <string name="last_modified">Last Modified</string>
+    <string name="loading_all_pdf_file">Loading all pdf files …</string>
 </resources>

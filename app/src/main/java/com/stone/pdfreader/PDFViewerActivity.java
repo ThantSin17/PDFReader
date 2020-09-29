@@ -8,11 +8,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
-import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -20,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.view.MotionEvent;
-import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.listener.OnDrawListener;
 import com.github.barteksc.pdfviewer.listener.OnErrorListener;
@@ -91,6 +92,9 @@ public class PDFViewerActivity extends AppCompatActivity implements OnPageChange
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.orientation_menu,menu);
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable drawable=getResources().getDrawable(R.drawable.ic_hori_verti);
+        drawable.setColorFilter(getResources().getColor(R.color.colorWhite), PorterDuff.Mode.SRC_ATOP);
+        menu.findItem(R.id.orientation).setIcon(drawable);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -109,7 +113,7 @@ public class PDFViewerActivity extends AppCompatActivity implements OnPageChange
     }
 
     private void doOrientation() {
-        Toast.makeText(this, "orientation", Toast.LENGTH_SHORT).show();
+        
         final AlertDialog.Builder builder=new AlertDialog.Builder(this);
         CharSequence[] charSequences={"Horizontal","Vertical"};
 

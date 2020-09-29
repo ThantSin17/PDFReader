@@ -2,14 +2,11 @@ package com.stone.pdfreader;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.database.Cursor;
+
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.provider.OpenableColumns;
-import android.renderscript.ScriptGroup;
 import android.view.LayoutInflater;
 
 import com.stone.pdfreader.adapter.PDFAdapter;
@@ -17,16 +14,21 @@ import com.stone.pdfreader.databinding.ActivityMainBinding;
 import com.stone.pdfreader.dto.PdfDto;
 import com.stone.pdfreader.listener.itemOnClickListener;
 
-import java.io.File;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements itemOnClickListener {
     ActivityMainBinding binding;
-    RecyclerView recyclerView;
+
     PDFAdapter adapter;
     PDFManager manager;
-    List<PdfDto> pdfList = new ArrayList<>();
+    static List<PdfDto> pdfList = new ArrayList<>();
+    public static Intent goToMainActivity(Context context,ArrayList<PdfDto> list){
+        Intent intent=new Intent(context,MainActivity.class);
+        pdfList=list;
+        return intent;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,132 +38,15 @@ public class MainActivity extends AppCompatActivity implements itemOnClickListen
         //recyclerView=binding.recyclerView;
         adapter = new PDFAdapter(this,this);
         manager=new PDFManager();
-        adapter.setPdfList(manager.getPlayList());
-        //walkdir(new File(Environment.getExternalStorageDirectory().toString()));
-       // init();
+        adapter.setPdfList(pdfList);
+
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(adapter);
 
 
     }
 
-    public void init() {
-        String selection = "_data LIKE '%.pdf'";
-        List<PdfDto> pdfList = new ArrayList<>();
-        try (Cursor fileCursor = getApplicationContext().getContentResolver().query(MediaStore.Files.getContentUri("external"), null, selection, null, "_id DESC")) {
-            if (fileCursor == null || fileCursor.getCount() <= 0 || !fileCursor.moveToFirst()) {
-                // this means error, or simply no results found
-                return;
-            }
-            do {
-                // your logic goes here
-//
-                int pathString= fileCursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
-             //   int uri=fileCursor.getColumnIndex(MediaStore.Files.getContentUri())
-                int nameIndex=fileCursor.getColumnIndex(MediaStore.Files.FileColumns.TITLE);
-                long sizeIndex=fileCursor.getColumnIndex(OpenableColumns.SIZE);
-                String path = fileCursor.getString(pathString);
-                String name=fileCursor.getString(nameIndex);
-                //String size=formatSize(sizeIndex);
-                long size=fileCursor.getLong((int) sizeIndex);
-//                ManageFIleInfoForRecycler temp=new ManageFIleInfoForRecycler();
-//                temp.filePath=path;
-//                temp.fileName=name;
-//                fileInfo.add(temp);
-                PdfDto item = new PdfDto();
-                item.setTitle(name);
-                //item.setSize(formatSize(size));
-                item.setUrl(path);
-                item.setSize(path);
-                pdfList.add(item);
-            } while (fileCursor.moveToNext());
-        }
-        adapter.setPdfList(pdfList);
-    }
-    public static String formatSize(long size) {
-        String suffix = null;
 
-        if (size >= 1024) {
-            suffix = " Bytes";
-            size /= 1024;
-            if (size >= 1024) {
-                suffix = " MB";
-                size /= 1024;
-            }
-        }
-        StringBuilder resultBuffer = new StringBuilder(Long.toString(size));
-
-        int commaOffset = resultBuffer.length() - 3;
-        while (commaOffset > 0) {
-            resultBuffer.insert(commaOffset, ',');
-            commaOffset -= 3;
-        }
-        if (suffix != null) resultBuffer.append(suffix);
-        return resultBuffer.toString();
-    }
-    public void walkdir(File dir) {
-
-        // String pdfPattern = ".pdf";
-
-        File listFile[] = dir.listFiles();
-
-        if (listFile != null && listFile.length > 0) {
-//            for (int i = 0; i < listFile.length; i++) {
-
-                for (File file : listFile) {
-                    System.out.println(file.getAbsolutePath());
-                    if (file.isDirectory()) {
-                        scanDirectory(file);
-                    } else {
-                        addSongToList(file);
-                    }
-                }
-//                if (listFile[i].isDirectory()) {
-//                    walkdir(listFile[i]);
-//                } else {
-//                    if (listFile[i].getName().endsWith(".pdf")) {
-//                        //Do what ever u want
-//
-//                        if (!listFile[i].getName().equals(" ")) {
-//                            PdfDto item = new PdfDto();
-//                            item.setTitle(listFile[i].getName());
-//                            item.setSize(listFile[i].getAbsolutePath());
-//                            pdfList.add(item);
-//                        }
-//                        // item.setSize(String.valueOf(listFile[i].getTotalSpace()));
-//
-//                    }
-//                }
-
-            }
-
-      //  }
-        adapter.setPdfList(pdfList);
-    }
-
-    private void scanDirectory(File directory) {
-        if (directory != null) {
-            File[] listFiles = directory.listFiles();
-            if (listFiles != null && listFiles.length > 0) {
-                for (File file : listFiles) {
-                    if (file.isDirectory()) {
-                        scanDirectory(file);
-                    } else {
-                        addSongToList(file);
-                    }
-
-                }
-            }
-        }
-    }
-    private void addSongToList(File song) {
-        if (song.getName().endsWith(".pdf")) {
-            PdfDto item = new PdfDto();
-                            item.setTitle(song.getName());
-                            item.setSize(song.getAbsolutePath());
-                            pdfList.add(item);
-        }
-    }
 
     @Override
     public void itemOnClick(PdfDto item) {

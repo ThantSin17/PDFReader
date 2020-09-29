@@ -41,18 +41,33 @@
             app:layout_constraintStart_toEndOf="@+id/itemImage"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/itemDate"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="@string/size"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/itemTitle"
+            app:layout_constraintEnd_toStartOf="@+id/itemSize"
+            app:layout_constraintTop_toBottomOf="@+id/itemTitle"
+            tools:ignore="SmallSp" />
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/itemSize"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_marginStart="20dp"
             android:gravity="center_vertical"
+            android:maxLines="1"
             android:text="@string/size"
             android:textSize="10sp"
-            android:maxLines="1"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/item_popImage"
-            app:layout_constraintStart_toEndOf="@+id/itemImage"
+            app:layout_constraintEnd_toEndOf="@+id/itemTitle"
+            app:layout_constraintStart_toEndOf="@+id/itemDate"
             app:layout_constraintTop_toBottomOf="@+id/itemTitle"
             tools:ignore="SmallSp" />
         <androidx.appcompat.widget.AppCompatImageView

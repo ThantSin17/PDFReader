@@ -1,6 +1,7 @@
 package com.stone.pdfreader.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -8,19 +9,24 @@ import android.view.ViewGroup;
 import android.widget.PopupMenu;
 
 import com.stone.pdfreader.R;
+import com.stone.pdfreader.alertDialog.DeleteAlertDialog;
+import com.stone.pdfreader.alertDialog.DetailAlertDialog;
 import com.stone.pdfreader.alertDialog.RenameAlertDialog;
+import com.stone.pdfreader.appUtils.AppUtil;
 import com.stone.pdfreader.databinding.ItemLayoutBinding;
 import com.stone.pdfreader.dto.PdfDto;
+import com.stone.pdfreader.listener.OnDeleteItemListener;
 import com.stone.pdfreader.listener.itemOnClickListener;
 import com.stone.pdfreader.listener.renameItemListener;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class PDFAdapter extends RecyclerView.Adapter<PDFAdapter.PDFViewHolder> implements renameItemListener {
+public class PDFAdapter extends RecyclerView.Adapter<PDFAdapter.PDFViewHolder> implements renameItemListener, OnDeleteItemListener {
     List<PdfDto> pdfList;
     Context context;
     itemOnClickListener listener;
@@ -47,7 +53,8 @@ public class PDFAdapter extends RecyclerView.Adapter<PDFAdapter.PDFViewHolder> i
     public void onBindViewHolder(@NonNull PDFViewHolder holder, final int position) {
         final PdfDto item=pdfList.get(position);
         holder.binding.itemTitle.setText(item.getTitle());
-        holder.binding.itemSize.setText(item.getSize());
+        holder.binding.itemSize.setText(AppUtil.getFileSize(item.getSize()));
+        holder.binding.itemDate.setText(AppUtil.getFileDate(item.getUrl()));
         holder.binding.itemCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,13 +74,16 @@ public class PDFAdapter extends RecyclerView.Adapter<PDFAdapter.PDFViewHolder> i
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()){
                     case R.id.pop_detail:
+                        detailFile(position);
                         break;
                     case R.id.pop_rename:
                         renameFile(position);
                         break;
                     case R.id.pop_delete:
+                        deleteFile(position);
                         break;
                     case R.id.pop_share:
+                        shareFile(position);
                         break;
                     default: return false;
                 }
@@ -81,8 +91,11 @@ public class PDFAdapter extends RecyclerView.Adapter<PDFAdapter.PDFViewHolder> i
             }
         });
         
-        holder.binding.itemPopImage.setOnTouchListener(popupMenu.getDragToOpenListener());
+        //holder.binding.itemPopImage.setOnTouchListener(popupMenu.getDragToOpenListener());
     }
+
+
+
 
     @Override
     public int getItemCount() {
@@ -93,10 +106,25 @@ public class PDFAdapter extends RecyclerView.Adapter<PDFAdapter.PDFViewHolder> i
     public int getItemViewType(int position) {
         return position;
     }
+    private void shareFile(int position) {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, new File(pdfList.get(position).getUrl()));
+        //Uri attachment = FileProvider.getUriForFile(context, , new File(pdfList.get(position).getUrl()));
+        //shareIntent.putExtra(Intent.EXTRA_STREAM, attachment);
+        shareIntent.setType("application/pdf");
+        context.startActivity(Intent.createChooser(shareIntent,pdfList.get(position).getTitle()));
+    }
+    private void detailFile(int position) {
+        new DetailAlertDialog(context,pdfList.get(position));
+    }
     private void renameFile(int position){
 
         new RenameAlertDialog(context,pdfList.get(position),position,this);
 
+    }
+    private void deleteFile(int position) {
+        new DeleteAlertDialog(context,pdfList.get(position),position,this);
     }
 
     @Override
@@ -104,6 +132,13 @@ public class PDFAdapter extends RecyclerView.Adapter<PDFAdapter.PDFViewHolder> i
         pdfList.set(position,item);
         notifyItemChanged(position);
 
+    }
+
+    @Override
+    public void deleteItemListener(PdfDto item, int position) {
+        pdfList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position,pdfList.size());
     }
 
     public static class PDFViewHolder extends RecyclerView.ViewHolder {
