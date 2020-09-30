@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class PDFAdapter extends RecyclerView.Adapter<PDFAdapter.PDFViewHolder> implements renameItemListener, OnDeleteItemListener {
     List<PdfDto> pdfList;
+    List<PdfDto> itemList;
     Context context;
     itemOnClickListener listener;
 
@@ -35,18 +36,35 @@ public class PDFAdapter extends RecyclerView.Adapter<PDFAdapter.PDFViewHolder> i
 
     public PDFAdapter(Context context, itemOnClickListener listener) {
         pdfList=new ArrayList<>();
+        itemList=new ArrayList<>();
         this.context = context;
         this.listener=listener;
     }
 
     public void setPdfList(List<PdfDto> pdfList) {
         this.pdfList = pdfList;
+        this.itemList=pdfList;
     }
 
     @NonNull
     @Override
     public PDFViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new PDFViewHolder(ItemLayoutBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+    }
+    public void filterData(String str){
+        if (str.isEmpty() || str.equals(" ")){
+            pdfList=itemList;
+        }else {
+            List<PdfDto> temp=new ArrayList<>();
+            for(PdfDto item : itemList){
+                if (item.getTitle().contains(str)){
+                    temp.add(item);
+                }
+            }
+            pdfList=temp;
+        }
+        notifyDataSetChanged();
+
     }
 
     @Override

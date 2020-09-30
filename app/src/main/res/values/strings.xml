@@ -17,4 +17,11 @@
     <string name="ok">OK</string>
     <string name="last_modified">Last Modified</string>
     <string name="loading_all_pdf_file">Loading all pdf files …</string>
+    <string name="check_update">Check Update</string>
+    <string name="about">About</string>
+    <string name="search">Search</string>
+    <string name="version_1_0">Version 1.0</string>
+    <string name="you_can_easily_view_detail_rename_and_delete_all_pdf_file_of_your_device">You can easily view, detail, rename and delete all pdf file of your device,</string>
+    <string name="contact_developer">Contact Developer</string>
+    <string name="thant_sin_htun">Thant Sin Htun (STONE)</string>
 </resources>

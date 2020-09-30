@@ -51,6 +51,7 @@ public class SplashActivity extends AppCompatActivity {
             protected void onPostExecute(ArrayList<PdfDto> pdfDtos) {
                 super.onPostExecute(pdfDtos);
                 startActivity(MainActivity.goToMainActivity(SplashActivity.this,pdfDtos));
+                finish();
             }
         }.execute();
 
